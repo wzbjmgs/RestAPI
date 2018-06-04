@@ -1,4 +1,4 @@
-package com.uxpsystems.assignment.security;
+package com.uxpsystems.assignment.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -27,7 +27,8 @@ class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable().authorizeRequests()
                 .anyRequest().authenticated()
                 .and().httpBasic()
-                .authenticationEntryPoint(authEntryPoint);
+                .authenticationEntryPoint(authEntryPoint)
+                .and().headers().frameOptions().sameOrigin();
     }
     @Bean
     public WebMvcConfigurer corsConfigurer() {
@@ -43,13 +44,12 @@ class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public BCryptPasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
-
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
-                .withUser("admin").password("$2a$04$LwAf4A8AWGYMlBjk/yTUs.41ZrECUTs6LEz6qeUaaVrPMf09yuHoq").roles("ADMIN")
+                .withUser("admin").password("$2a$04$LwAf4A8AWGYMlBjk/yTUs.41ZrECUTs6LEz6qeUaaVrPMf09yuHoq").authorities("ROLE_ADMIN")
                 .and()
-                .withUser("user").password("$2a$04$KB/ORbO1tv9nLgegaM5L5OEdiMMI/0FCDYU7oHIj/.bf4jxsCeaMa").roles("CUSTOMER");
+                .withUser("user").password("$2a$04$KB/ORbO1tv9nLgegaM5L5OEdiMMI/0FCDYU7oHIj/.bf4jxsCeaMa").authorities("ROLE_CUSTOMER");
     }
 
 }

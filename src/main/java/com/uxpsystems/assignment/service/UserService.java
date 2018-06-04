@@ -1,58 +1,30 @@
 package com.uxpsystems.assignment.service;
 
 import com.uxpsystems.assignment.dao.User;
-import com.uxpsystems.assignment.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
-@Service("userService")
-@Transactional
-public class UserService{
-    AtomicLong atomicLong = new AtomicLong();
-    private static List<User> users;
+public interface UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    @Secured({"ROLE_CUSTOMER", "ROLE_ADMIN"})
+    List<User> findAllUsers();
 
-    public List<User> findAllUsers() {
-        List<User> users = userRepository.findAll();
-        return users;
-    }
+    @Secured({"ROLE_CUSTOMER", "ROLE_ADMIN"})
+    User findById(long id);
 
-    public List<User> findAll(){
-        List<User> users = userRepository.findAll();
-        return users;
-    }
+    @Secured("ROLE_ADMIN")
+    User saveUser(User user);
 
-    public User findById(long id) {
-        return userRepository.findById(id);
-    }
+    @Secured("ROLE_ADMIN")
+    void updateUser(User user);
 
-    public User saveUser(User user) {
-        user.setId(atomicLong.incrementAndGet());
-        return userRepository.save(user);
-    }
+    @Secured("ROLE_ADMIN")
+    void deleteUserById(long id);
 
-    public void updateUser(User user) {
-        userRepository.updateUser(user.getId(), user.getStatus());
-    }
+    @Secured("ROLE_ADMIN")
+    void deleteAllUsers();
 
-    public void deleteUserById(long id) {
-        userRepository.deleteById(id);
-    }
-
-    public void deleteAllUsers() {
-
-        userRepository.deleteAll();
-    }
-
-    public boolean isUserExist(User user) {
-        User u = userRepository.findById(user.getId());
-        return u != null;
-    }
+    @Secured("ROLE_ADMIN")
+    boolean isUserExist(User user);
 }

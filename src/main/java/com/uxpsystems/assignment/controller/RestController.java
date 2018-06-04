@@ -1,6 +1,6 @@
 package com.uxpsystems.assignment.controller;
 
-import com.uxpsystems.assignment.Error.CustomErrorType;
+import com.uxpsystems.assignment.exceptions.NoUserFoundException;
 import com.uxpsystems.assignment.dao.User;
 import com.uxpsystems.assignment.service.UserService;
 import org.slf4j.Logger;
@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Controller
-@RequestMapping("/assignement")
+@RequestMapping("/assignment")
 public class RestController {
 
     private static final Logger logger = LoggerFactory.getLogger(RestController.class);
@@ -34,21 +34,19 @@ public class RestController {
     public ResponseEntity<List<User>> listAllUsers() {
         List<User> users = userService.findAllUsers();
         if (users.isEmpty()) {
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<List<User>>(users, HttpStatus.OK);
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     //-------------------Retrieve Single User--------------------------------------------------------
-
     @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getUser(@PathVariable("id") long id) {
         User user = userService.findById(id);
         if (user == null) {
-            return new ResponseEntity(new CustomErrorType("User with id " + id
-                    + " not found"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new NoUserFoundException("User with id " + id + " not found").getMessage(), HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<User>(user, HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     //-------------------Create a User--------------------------------------------------------
@@ -59,8 +57,8 @@ public class RestController {
 
         if (userService.isUserExist(user)) {
             logger.error("Unable to create. A User with name {} already exist", user.getUsername());
-            return new ResponseEntity(new CustomErrorType("Unable to create. A User with name " +
-                    user.getUsername() + " already exist."),HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new NoUserFoundException("Unable to create. A User with name " +
+                    user.getUsername() + " already exist."), HttpStatus.CONFLICT);
         }
         userService.saveUser(user);
 
@@ -80,16 +78,17 @@ public class RestController {
 
         if (currentUser == null) {
             logger.error("Unable to update. User with id {} not found.", id);
-            return new ResponseEntity(new CustomErrorType("Unable to upate. User with id " + id + " not found."),
+            return new ResponseEntity<>(new NoUserFoundException("Unable to upate. User with id " + id + " not found."),
                     HttpStatus.NOT_FOUND);
         }
 
         currentUser.setStatus(user.getStatus());
         userService.updateUser(currentUser);
-        return new ResponseEntity<User>(currentUser, HttpStatus.OK);
+        return new ResponseEntity<>(currentUser, HttpStatus.OK);
     }
 
     //------------------- Delete a User --------------------------------------------------------
+
     @RequestMapping(value = "/user/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(@PathVariable("id") long id) {
         logger.info("Fetching & Deleting User with id {}", id);
@@ -97,28 +96,28 @@ public class RestController {
         User user = userService.findById(id);
         if (user == null) {
             logger.error("Unable to delete. User with id {} not found.", id);
-            return new ResponseEntity(new CustomErrorType("Unable to delete. User with id " + id + " not found."),
+            return new ResponseEntity<>(new NoUserFoundException("Unable to delete. User with id " + id + " not found."),
                     HttpStatus.NOT_FOUND);
         }
         userService.deleteUserById(id);
-        return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<User>(HttpStatus.OK);
     }
 
     //------------------- Delete all User --------------------------------------------------------
-    @DeleteMapping("/user/")
+
     @RequestMapping(value = "/user/", method = RequestMethod.DELETE)
     public ResponseEntity<User> deleteAllUsers() {
         logger.info("Deleting All Users");
 
         userService.deleteAllUsers();
-        return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     //log me out
-    @RequestMapping(value="/logout", method = RequestMethod.POST)
-    public void logoutPage (HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    public void logoutPage(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null){
+        if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
     }

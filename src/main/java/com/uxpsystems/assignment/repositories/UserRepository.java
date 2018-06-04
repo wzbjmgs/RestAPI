@@ -13,13 +13,13 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    public List<User> findAll();
+    List<User> findAll();
 
-    public User findById(long id);
+    User findById(long id);
 
-    public void deleteById(long id);
+    void deleteById(long id);
 
-    public void deleteAll();
+    void deleteAll();
 
     @Transactional
     @Modifying

@@ -1,4 +1,4 @@
-package com.uxpsystems.assignment.security;
+package com.uxpsystems.assignment.config;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;

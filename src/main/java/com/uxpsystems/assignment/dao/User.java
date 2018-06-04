@@ -1,8 +1,15 @@
 package com.uxpsystems.assignment.dao;
 
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -17,9 +24,23 @@ public class User implements Serializable {
     @Column(unique = true)
     private String username;
 
+    @Column
     private String password;
 
+    @Column
+    @Pattern(regexp = "Activated|Deactivated", flags = Pattern.Flag.CASE_INSENSITIVE)
     private String status;
+
+    public User() {
+
+    }
+
+    public User(UserBuilder builder) {
+        this.id = builder.id;
+        this.username = builder.username;
+        this.password = builder.password;
+        this.status = builder.status;
+    }
 
     public long getId() {
         return id;
@@ -39,6 +60,10 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public String getStatus() {
