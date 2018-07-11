@@ -80,7 +80,7 @@ public class ControllerTest {
                 .status("DeActivated")
                 .build();
         when(userServiceMock.findAllUsers()).thenReturn(Arrays.asList(user1, user2, user3));
-        mockMvc.perform(get("/assignment/user/")
+        mockMvc.perform(get("/user/")
                 .with(httpBasic("admin", "admin")))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
@@ -105,7 +105,7 @@ public class ControllerTest {
                 .build();
         Mockito.when(userServiceMock.saveUser(user)).thenReturn(user);
         String json = mapper.writeValueAsString(user);
-        mockMvc.perform(post("/assignment/user/")
+        mockMvc.perform(post("/user/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .with(httpBasic("admin", "admin")))
@@ -123,7 +123,7 @@ public class ControllerTest {
         when(userServiceMock.findById(user.getId())).thenReturn(user);
         doNothing().when(userServiceMock).updateUser(user);
         String json = mapper.writeValueAsString(user);
-        mockMvc.perform(put("/assignment/user/{id}", user.getId())
+        mockMvc.perform(put("/user/{id}", user.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
                 .with(httpBasic("admin", "admin")))
@@ -140,7 +140,7 @@ public class ControllerTest {
                 .build();
         when(userServiceMock.findById(user.getId())).thenReturn(user);
         doNothing().when(userServiceMock).deleteUserById(user.getId());
-        mockMvc.perform(delete("/assignment/user/{id}", user.getId())
+        mockMvc.perform(delete("/user/{id}", user.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(httpBasic("admin", "admin")))
                 .andExpect(status().isOk());

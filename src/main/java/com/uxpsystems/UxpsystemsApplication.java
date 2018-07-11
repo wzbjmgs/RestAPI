@@ -19,7 +19,7 @@ import java.util.Collection;
 
 @EnableCaching
 @SpringBootApplication
-public class UxpsystemsApplication implements CommandLineRunner {
+public class UxpsystemsApplication extends ServletInitializer implements CommandLineRunner{
 
     private static final Logger log = LoggerFactory.getLogger(UxpsystemsApplication.class);
 

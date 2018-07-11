@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Controller
-@RequestMapping("/assignment")
 public class RestController {
 
     private static final Logger logger = LoggerFactory.getLogger(RestController.class);
